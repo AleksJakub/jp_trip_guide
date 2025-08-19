@@ -1,0 +1,6 @@
+[
+  {"id":"p_hello","category":"general","jp":"こんにちは","romaji":"konnichiwa","en":"Hello"},
+  {"id":"p_thank_you","category":"general","jp":"ありがとうございます","romaji":"arigatou gozaimasu","en":"Thank you"},
+  {"id":"p_where_station","category":"transport","jp":"駅はどこですか？","romaji":"eki wa doko desu ka?","en":"Where is the station?"}
+]
+

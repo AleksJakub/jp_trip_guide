@@ -1,0 +1,11 @@
+{
+  "shrine": {
+    "do": ["Bow before entering the torii", "Purify hands and mouth at the chozuya"],
+    "dont": ["Do not walk in the center under the torii", "Do not take photos where prohibited"]
+  },
+  "onsen": {
+    "do": ["Wash thoroughly before entering", "Tie up long hair"],
+    "dont": ["No swimsuits", "Do not soak towels in the water"]
+  }
+}
+
