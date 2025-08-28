@@ -34,6 +34,9 @@ migrate_working_dir/
 /build/
 .env
 
+# Generated files with API keys
+web/index.html
+
 # Symbolication related
 app.*.symbols
 

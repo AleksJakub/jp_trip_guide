@@ -67,12 +67,16 @@ class TripDay {
   final DateTime date;
   final String notes;
   final List<StopItem> stops;
+  final String? nickname;
+  final DateTime? endTime;
 
   const TripDay({
     required this.id,
     required this.date,
     this.notes = '',
     this.stops = const [],
+    this.nickname,
+    this.endTime,
   });
 
   TripDay copyWith({
@@ -80,12 +84,16 @@ class TripDay {
     DateTime? date,
     String? notes,
     List<StopItem>? stops,
+    String? nickname,
+    DateTime? endTime,
   }) {
     return TripDay(
       id: id ?? this.id,
       date: date ?? this.date,
       notes: notes ?? this.notes,
       stops: stops ?? this.stops,
+      nickname: nickname ?? this.nickname,
+      endTime: endTime ?? this.endTime,
     );
   }
 
@@ -94,6 +102,8 @@ class TripDay {
         'date': date.toIso8601String(),
         'notes': notes,
         'stops': stops.map((s) => s.toMap()).toList(),
+        'nickname': nickname,
+        'endTime': endTime?.toIso8601String(),
       };
 
   static TripDay fromMap(Map<String, dynamic> map) => TripDay(
@@ -103,6 +113,8 @@ class TripDay {
         stops: (map['stops'] as List<dynamic>? ?? const [])
             .map((e) => StopItem.fromMap(e as Map<String, dynamic>))
             .toList(),
+        nickname: map['nickname'] as String?,
+        endTime: map['endTime'] != null ? DateTime.parse(map['endTime'] as String) : null,
       );
 }
 

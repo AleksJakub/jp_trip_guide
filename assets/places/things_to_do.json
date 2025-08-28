@@ -1,0 +1,123 @@
+[
+  {
+    "id": "tokyo_sensoji",
+    "name": "Sensō-ji Temple",
+    "category": "temple",
+    "city": "Tokyo (Asakusa)",
+    "address": "2 Chome-3-1 Asakusa, Taito City, Tokyo",
+    "lat": 35.714765,
+    "lng": 139.796655,
+    "description": "Tokyo’s oldest Buddhist temple, famous for its Thunder Gate and Nakamise shopping street.",
+    "openingHours": "6:00–17:00",
+    "price": "Free"
+  },
+  {
+    "id": "tokyo_skytree",
+    "name": "Tokyo Skytree",
+    "category": "observation",
+    "city": "Tokyo (Sumida)",
+    "address": "1 Chome-1-2 Oshiage, Sumida City, Tokyo",
+    "lat": 35.710062,
+    "lng": 139.8107,
+    "description": "The tallest tower in Japan with observation decks offering panoramic views.",
+    "openingHours": "10:00–21:00",
+    "price": "¥2,100+"
+  },
+  {
+    "id": "tokyo_tsukiji",
+    "name": "Tsukiji Outer Market",
+    "category": "food",
+    "city": "Tokyo",
+    "address": "4 Chome-16-2 Tsukiji, Chuo City, Tokyo",
+    "lat": 35.665498,
+    "lng": 139.770642,
+    "description": "Street food stalls and seafood shops around the historic fish market area.",
+    "openingHours": "5:00–14:00",
+    "price": "Varies"
+  },
+  {
+    "id": "tokyo_shibuya_crossing",
+    "name": "Shibuya Crossing",
+    "category": "landmark",
+    "city": "Tokyo",
+    "address": "Shibuya Station Hachikō Exit, Tokyo",
+    "lat": 35.6595,
+    "lng": 139.7005,
+    "description": "World-famous scramble crossing surrounded by neon billboards and shopping.",
+    "openingHours": "24/7",
+    "price": "Free"
+  },
+  {
+    "id": "tokyo_meiji_jingu",
+    "name": "Meiji Shrine",
+    "category": "shrine",
+    "city": "Tokyo (Shibuya)",
+    "address": "1-1 Yoyogikamizonocho, Shibuya City, Tokyo",
+    "lat": 35.6764,
+    "lng": 139.6993,
+    "description": "Shinto shrine dedicated to Emperor Meiji and Empress Shoken, located in a forest oasis.",
+    "openingHours": "Sunrise–Sunset",
+    "price": "Free"
+  },
+  {
+    "id": "kyoto_fushimi_inari",
+    "name": "Fushimi Inari Taisha",
+    "category": "shrine",
+    "city": "Kyoto",
+    "address": "68 Fukakusa Yabunouchicho, Fushimi Ward, Kyoto",
+    "lat": 34.9671,
+    "lng": 135.7727,
+    "description": "Iconic Shinto shrine with thousands of vermilion torii gates leading up the mountain.",
+    "openingHours": "24/7",
+    "price": "Free"
+  },
+  {
+    "id": "kyoto_kinkakuji",
+    "name": "Kinkaku-ji (Golden Pavilion)",
+    "category": "temple",
+    "city": "Kyoto",
+    "address": "1 Kinkakujicho, Kita Ward, Kyoto",
+    "lat": 35.0394,
+    "lng": 135.7292,
+    "description": "Zen temple covered in gold leaf surrounded by beautiful gardens.",
+    "openingHours": "9:00–17:00",
+    "price": "¥400"
+  },
+  {
+    "id": "kyoto_arashiyama",
+    "name": "Arashiyama Bamboo Grove",
+    "category": "nature",
+    "city": "Kyoto",
+    "address": "Sagaogurayama Tabuchiyamacho, Ukyo Ward, Kyoto",
+    "lat": 35.0094,
+    "lng": 135.6668,
+    "description": "Famous bamboo forest walk, especially atmospheric in the early morning.",
+    "openingHours": "24/7",
+    "price": "Free"
+  },
+  {
+    "id": "kyoto_gion",
+    "name": "Gion District",
+    "category": "culture",
+    "city": "Kyoto",
+    "address": "Higashiyama Ward, Kyoto",
+    "lat": 35.0037,
+    "lng": 135.7788,
+    "description": "Traditional entertainment district famous for geisha culture and tea houses.",
+    "openingHours": "Evenings best",
+    "price": "Varies"
+  },
+  {
+    "id": "kyoto_nijo_castle",
+    "name": "Nijō Castle",
+    "category": "castle",
+    "city": "Kyoto",
+    "address": "541 Nijojocho, Nakagyo Ward, Kyoto",
+    "lat": 35.0142,
+    "lng": 135.7481,
+    "description": "UNESCO castle with ornate interiors and beautiful gardens.",
+    "openingHours": "8:45–17:00",
+    "price": "¥620"
+  }
+]
+
