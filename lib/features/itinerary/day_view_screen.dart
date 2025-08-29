@@ -21,6 +21,15 @@ class _DayViewScreenState extends ConsumerState<DayViewScreen> {
     final Trip? trip = trips.where((t) => t.id == widget.tripId).cast<Trip?>().firstOrNull;
     if (trip == null) return const Scaffold(body: Center(child: Text('Trip not found')));
 
+    final String? expandedDayId = ref.watch(expandedDayIdProvider);
+    if (expandedDayId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(expandedDayIdProvider.notifier).state = null;
+        }
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(trip.title),
@@ -40,7 +49,7 @@ class _DayViewScreenState extends ConsumerState<DayViewScreen> {
             color: Colors.black.withOpacity(0.3),
           ),
           child: SafeArea(
-            child: ListView(
+            child: trip.days.isEmpty ? _EmptyTripDays(tripId: trip.id) : ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 const SizedBox(height: 60),
@@ -48,6 +57,7 @@ class _DayViewScreenState extends ConsumerState<DayViewScreen> {
                   Card(
                     margin: const EdgeInsets.only(bottom: 12),
                     child: ExpansionTile(
+                      initiallyExpanded: expandedDayId == day.id,
                       title: Text(_formatDayTitle(day)),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -179,7 +189,7 @@ class _DayViewScreenState extends ConsumerState<DayViewScreen> {
                                         name: 'Custom Stop',
                                         lat: 35.6762,
                                         lng: 139.6503,
-                                        category: 'custom',
+                                        category: null,
                                         startTs: DateTime.now(),
                                       ),
                                     ),
@@ -210,20 +220,22 @@ class _DayViewScreenState extends ConsumerState<DayViewScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await showDialog(
-            context: context,
-            builder: (_) => _AddDayDialog(
-              onAdd: (date, nickname) async {
-                await ref.read(tripsProvider.notifier).addDay(trip.id, date, nickname: nickname);
+      floatingActionButton: trip.days.isEmpty
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () async {
+                await showDialog(
+                  context: context,
+                  builder: (_) => _AddDayDialog(
+                    onAdd: (date, nickname) async {
+                      await ref.read(tripsProvider.notifier).addDay(trip.id, date, nickname: nickname);
+                    },
+                  ),
+                );
               },
+              icon: const Icon(Icons.today),
+              label: const Text('Add day'),
             ),
-          );
-        },
-        icon: const Icon(Icons.today),
-        label: const Text('Add day'),
-      ),
     );
   }
 
@@ -261,16 +273,16 @@ class _AddDayDialogState extends State<_AddDayDialog> {
         children: [
           ListTile(
             title: const Text('Date'),
-            subtitle: Text(_date.toLocal().toIso8601String().split('T').first),
+            subtitle: Text(DateFormat('EEE, MMM d, y').format(_date)),
             onTap: () async {
-              final DateTime? d = await showDatePicker(
-                context: context,
-                initialDate: _date,
-                firstDate: DateTime(2020),
-                lastDate: DateTime(2035),
-              );
-              if (d != null) setState(() => _date = d);
-            },
+                final DateTime? d = await showDatePicker(
+                  context: context,
+                  initialDate: _date,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2035),
+                );
+                if (d != null) setState(() => _date = d);
+              },
           ),
           TextField(
             controller: _nickname,
@@ -352,77 +364,64 @@ class _EditStopDialogState extends State<_EditStopDialog> {
           ),
           const SizedBox(height: 16),
           ListTile(
-            title: const Text('Start Time (optional)'),
+            title: const Text('Start Time'),
             subtitle: Text(_startTime != null ? DateFormat.Hm().format(_startTime!) : 'Not set'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextButton(
-                  onPressed: () async {
-                    final TimeOfDay? time = await showTimePicker(
-                      context: context,
-                      initialTime: _startTime != null ? TimeOfDay.fromDateTime(_startTime!) : TimeOfDay.now(),
-                    );
-                    if (time != null) {
-                      setState(() {
-                        _startTime = DateTime(
-                          DateTime.now().year,
-                          DateTime.now().month,
-                          DateTime.now().day,
-                          time.hour,
-                          time.minute,
-                        );
-                      });
-                    }
-                  },
-                  child: const Text('Pick'),
-                ),
-                if (_startTime != null)
-                  TextButton(
+            onTap: () async {
+              final TimeOfDay? time = await showTimePicker(
+                context: context,
+                initialTime: _startTime != null ? TimeOfDay.fromDateTime(_startTime!) : TimeOfDay.now(),
+              );
+              if (time != null) {
+                setState(() {
+                  _startTime = DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                    time.hour,
+                    time.minute,
+                  );
+                });
+              }
+            },
+            trailing: _startTime != null
+                ? TextButton(
                     onPressed: () => setState(() => _startTime = null),
                     child: const Text('Clear'),
-                  ),
-              ],
-            ),
+                  )
+                : null,
           ),
           ListTile(
-            title: const Text('End Time (optional)'),
+            title: const Text('End Time'),
             subtitle: Text(_endTime != null ? DateFormat.Hm().format(_endTime!) : 'Not set'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextButton(
-                  onPressed: () async {
-                    final TimeOfDay? time = await showTimePicker(
-                      context: context,
-                      initialTime: _endTime != null ? TimeOfDay.fromDateTime(_endTime!) : TimeOfDay.now(),
-                    );
-                    if (time != null) {
-                      setState(() {
-                        _endTime = DateTime(
-                          DateTime.now().year,
-                          DateTime.now().month,
-                          DateTime.now().day,
-                          time.hour,
-                          time.minute,
-                        );
-                      });
-                    }
-                  },
-                  child: const Text('Pick'),
-                ),
-                if (_endTime != null)
-                  TextButton(
+            onTap: () async {
+              final TimeOfDay? time = await showTimePicker(
+                context: context,
+                initialTime: _endTime != null ? TimeOfDay.fromDateTime(_endTime!) : TimeOfDay.now(),
+              );
+              if (time != null) {
+                setState(() {
+                  _endTime = DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                    time.hour,
+                    time.minute,
+                  );
+                });
+              }
+            },
+            trailing: _endTime != null
+                ? TextButton(
                     onPressed: () => setState(() => _endTime = null),
                     child: const Text('Clear'),
-                  ),
-              ],
-            ),
+                  )
+                : null,
           ),
           const SizedBox(height: 8),
           _IconSelector(
             initialCategory: _selectedCategory,
             onChanged: (c) => setState(() => _selectedCategory = c),
+            asDropdown: widget.initial.placeId == 'custom',
           ),
         ],
       ),
@@ -471,17 +470,11 @@ IconData _iconForCategory(String? category) {
   }
 }
 
-class _IconSelector extends StatefulWidget {
+class _IconSelector extends StatelessWidget {
   final String? initialCategory;
   final ValueChanged<String?> onChanged;
-  const _IconSelector({required this.initialCategory, required this.onChanged});
-
-  @override
-  State<_IconSelector> createState() => _IconSelectorState();
-}
-
-class _IconSelectorState extends State<_IconSelector> {
-  bool _expanded = false;
+  final bool asDropdown;
+  const _IconSelector({required this.initialCategory, required this.onChanged, this.asDropdown = false});
 
   List<String> get _categories => const [
         'temple', 'shrine', 'food', 'nature', 'culture', 'castle', 'observation', 'landmark'
@@ -489,57 +482,54 @@ class _IconSelectorState extends State<_IconSelector> {
 
   @override
   Widget build(BuildContext context) {
-    final String? selected = widget.initialCategory;
-    final IconData currentIcon = _iconForCategory(selected);
+    final String? selected = _categories.contains(initialCategory ?? '') ? initialCategory : null;
+    if (asDropdown) {
+      final String? selected = _categories.contains(initialCategory ?? '') ? initialCategory : null;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Icon'),
+          const SizedBox(height: 8),
+          DropdownButton<String?>(
+            value: selected,
+            isExpanded: true,
+            items: <DropdownMenuItem<String?>>[
+              const DropdownMenuItem<String?>(value: null, child: Text('Default')),
+              ..._categories.map((c) => DropdownMenuItem<String?>(
+                    value: c,
+                    child: Row(children: [Icon(_iconForCategory(c)), const SizedBox(width: 8), Text(c)]),
+                  )),
+            ],
+            onChanged: onChanged,
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InkWell(
-          onTap: () => setState(() => _expanded = !_expanded),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: Colors.blueGrey.shade100,
-                child: Icon(currentIcon, size: 18, color: Colors.blueGrey.shade700),
-              ),
-              const SizedBox(width: 8),
-              Text(selected == null || selected.isEmpty ? 'Default icon' : selected),
-              const SizedBox(width: 8),
-              Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-            ],
-          ),
-        ),
-        if (_expanded)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DropdownButton<String?>(
-                  value: selected?.isEmpty == true ? null : selected,
-                  isExpanded: true,
-                  items: <DropdownMenuItem<String?>>[
-                    const DropdownMenuItem<String?>(
-                      value: null,
-                      child: Text('Default'),
-                    ),
-                    ..._categories.map((c) => DropdownMenuItem<String?>(
-                          value: c,
-                          child: Row(
-                            children: [Icon(_iconForCategory(c)), const SizedBox(width: 8), Text(c)],
-                          ),
-                        )),
-                  ],
-                  onChanged: (val) {
-                    widget.onChanged(val);
-                    setState(() {});
-                  },
-                ),
-              ],
+        const Text('Icon'),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ChoiceChip(
+              label: const Text('default'),
+              selected: selected == null,
+              onSelected: (_) => onChanged(null),
             ),
-          ),
+            for (final c in _categories)
+              ChoiceChip(
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [Icon(_iconForCategory(c), size: 16), const SizedBox(width: 4), Text(c)],
+                ),
+                selected: selected == c,
+                onSelected: (_) => onChanged(c),
+              ),
+          ],
+        ),
       ],
     );
   }
@@ -590,7 +580,7 @@ class _EditDayDialogState extends State<_EditDayDialog> {
         children: [
           ListTile(
             title: const Text('Date'),
-            subtitle: Text(_date.toLocal().toIso8601String().split('T').first),
+            subtitle: Text(DateFormat('EEE, MMM d, y').format(_date)),
             onTap: () async {
               final DateTime? d = await showDatePicker(
                 context: context,
@@ -616,6 +606,49 @@ class _EditDayDialogState extends State<_EditDayDialog> {
           child: const Text('Save'),
         ),
       ],
+    );
+  }
+}
+
+class _EmptyTripDays extends ConsumerWidget {
+  final String tripId;
+  const _EmptyTripDays({required this.tripId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 60),
+          Icon(Icons.calendar_today, size: 64, color: Colors.white.withOpacity(0.7)),
+          const SizedBox(height: 16),
+          const Text(
+            'No days yet',
+            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Create your first day to start planning',
+            style: TextStyle(color: Colors.white70, fontSize: 16),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await showDialog(
+                context: context,
+                builder: (_) => _AddDayDialog(
+                  onAdd: (date, nickname) async {
+                    await ref.read(tripsProvider.notifier).addDay(tripId, date, nickname: nickname);
+                  },
+                ),
+              );
+            },
+            icon: const Icon(Icons.today),
+            label: const Text('Add day'),
+          ),
+        ],
+      ),
     );
   }
 }

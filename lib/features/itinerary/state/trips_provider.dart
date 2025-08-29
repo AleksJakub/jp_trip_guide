@@ -86,4 +86,7 @@ class TripsNotifier extends Notifier<List<Trip>> {
 
 final currentTripIdProvider = StateProvider<String?>((ref) => null);
 
+// When navigating back to a trip after adding a place, expand this day by default.
+final expandedDayIdProvider = StateProvider<String?>((ref) => null);
+
 

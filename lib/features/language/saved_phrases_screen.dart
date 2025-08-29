@@ -32,7 +32,9 @@ class _SavedPhrasesScreenState extends ConsumerState<SavedPhrasesScreen> {
     try {
       final String jsonString = await DefaultAssetBundle.of(context).loadString('assets/phrases/phrases_en_jp.json');
       final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
-      allPhrases = jsonList.cast<Map<String, dynamic>>();
+      setState(() {
+        allPhrases = jsonList.cast<Map<String, dynamic>>();
+      });
     } catch (e) {
       // Handle error
     }
@@ -125,72 +127,59 @@ class _SavedPhrasesScreenState extends ConsumerState<SavedPhrasesScreen> {
                       );
                     }
                     
+                    // Group by category
+                    final Map<String, List<Map<String, dynamic>>> grouped = {};
+                    for (final p in savedPhrases) {
+                      final String cat = (p['category'] ?? 'Other').toString();
+                      (grouped[cat] ??= []).add(p);
+                    }
+                    final List<String> categories = grouped.keys.toList()..sort();
+
                     return Expanded(
-                      child: ListView.builder(
+                      child: ListView(
                         padding: const EdgeInsets.all(16),
-                        itemCount: savedPhrases.length,
-                        itemBuilder: (context, index) {
-                          final phrase = savedPhrases[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                        children: [
+                          for (final cat in categories) ...[
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Text(
+                                cat[0].toUpperCase() + cat.substring(1),
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                              ),
+                            ),
+                            for (final phrase in grouped[cat]!)
+                              Card(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Row(
                                     children: [
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              phrase['en'] ?? '',
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
+                                            Text(phrase['en'] ?? '', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                                             const SizedBox(height: 8),
-                                            Text(
-                                              phrase['jp'] ?? '',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
-                                            ),
+                                            Text(phrase['jp'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                                             const SizedBox(height: 4),
-                                            Text(
-                                              phrase['romaji'] ?? '',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey,
-                                                fontStyle: FontStyle.italic,
-                                              ),
-                                            ),
+                                            Text(phrase['romaji'] ?? '', style: const TextStyle(fontSize: 14, color: Colors.grey, fontStyle: FontStyle.italic)),
                                           ],
                                         ),
                                       ),
                                       Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.volume_up),
-                                            onPressed: () => _speak(phrase['jp'] ?? ''),
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.bookmark, color: Colors.green),
-                                            onPressed: () => _removeFromSaved(phrase['id'] ?? ''),
-                                          ),
+                                          IconButton(icon: const Icon(Icons.volume_up), onPressed: () => _speak(phrase['jp'] ?? '')),
+                                          IconButton(icon: const Icon(Icons.bookmark, color: Colors.green), onPressed: () => _removeFromSaved(phrase['id'] ?? '')),
                                         ],
                                       ),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            const SizedBox(height: 12),
+                          ],
+                        ],
                       ),
                     );
                   },

@@ -141,7 +141,8 @@ class MoreScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade800,
+                        color: Colors.black.withOpacity(0.85),
+                        shadows: const [Shadow(blurRadius: 0.5, color: Colors.white24, offset: Offset(0, 0))],
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -149,7 +150,7 @@ class MoreScreen extends StatelessWidget {
                       subtitle,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey.shade600,
+                        color: Colors.black.withOpacity(0.7),
                       ),
                     ),
                   ],

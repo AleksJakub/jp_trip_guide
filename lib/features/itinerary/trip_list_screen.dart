@@ -184,7 +184,7 @@ class _CreateTripDialogState extends State<_CreateTripDialog> {
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Center(child: Text('Start: ${_start.toLocal().toIso8601String().split('T').first}', textAlign: TextAlign.center)),
+              child: Center(child: Text('Start: ${DateFormat('EEE, MMM d, y').format(_start)}', textAlign: TextAlign.center)),
             ),
           ),
           InkWell(
@@ -194,7 +194,7 @@ class _CreateTripDialogState extends State<_CreateTripDialog> {
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Center(child: Text('End: ${_end.toLocal().toIso8601String().split('T').first}', textAlign: TextAlign.center)),
+              child: Center(child: Text('End: ${DateFormat('EEE, MMM d, y').format(_end)}', textAlign: TextAlign.center)),
             ),
           ),
         ],

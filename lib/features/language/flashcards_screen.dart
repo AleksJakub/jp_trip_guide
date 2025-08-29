@@ -45,17 +45,29 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> with TickerProvider
     try {
       final String response = await DefaultAssetBundle.of(context).loadString('assets/phrases/phrases_en_jp.json');
       final List<dynamic> data = json.decode(response);
+      // Normalize keys to { en, jp, romaji }
+      final List<Map<String, String>> normalized = data.map((raw) {
+        final Map<String, dynamic> e = Map<String, dynamic>.from(raw as Map);
+        final String en = (e['en'] ?? e['english'] ?? '').toString();
+        final String jp = (e['jp'] ?? e['japanese'] ?? '').toString();
+        final String romaji = (e['romaji'] ?? '').toString();
+        return {
+          'en': en,
+          'jp': jp,
+          'romaji': romaji,
+        };
+      }).toList();
       setState(() {
-        phrases = data.map((e) => Map<String, String>.from(e)).toList();
+        phrases = normalized;
         _shuffleDeck();
       });
     } catch (e) {
       // Fallback phrases if loading fails
       setState(() {
         phrases = [
-          {"english": "Hello", "japanese": "こんにちは", "romaji": "Konnichiwa"},
-          {"english": "Thank you", "japanese": "ありがとう", "romaji": "Arigatou"},
-          {"english": "Goodbye", "japanese": "さようなら", "romaji": "Sayounara"},
+          {"en": "Hello", "jp": "こんにちは", "romaji": "Konnichiwa"},
+          {"en": "Thank you", "jp": "ありがとう", "romaji": "Arigatou"},
+          {"en": "Goodbye", "jp": "さようなら", "romaji": "Sayounara"},
         ];
         _shuffleDeck();
       });
@@ -133,7 +145,7 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> with TickerProvider
 
   void _speakJapanese() {
     if (currentDeck.isNotEmpty) {
-      flutterTts.speak(currentDeck[currentIndex]['japanese'] ?? '');
+      flutterTts.speak(currentDeck[currentIndex]['jp'] ?? '');
     }
   }
 
@@ -236,12 +248,13 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> with TickerProvider
                       child: AnimatedBuilder(
                         animation: _flipAnimation,
                         builder: (context, child) {
-                          final transform = Matrix4.identity()
-                            ..setEntry(3, 2, 0.001)
-                            ..rotateY(3.14159 * _flipAnimation.value);
-                          
+                          final angle = 3.14159 * _flipAnimation.value;
+                          final showBack = angle >= 1.5708; // > 90 degrees
+
                           return Transform(
-                            transform: transform,
+                            transform: Matrix4.identity()
+                              ..setEntry(3, 2, 0.001)
+                              ..rotateY(angle),
                             alignment: Alignment.center,
                             child: Card(
                               elevation: 8,
@@ -254,48 +267,55 @@ class _FlashcardsScreenState extends State<FlashcardsScreen> with TickerProvider
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    if (!isFlipped) ...[
-                                      Text(
-                                        currentPhrase['english'] ?? '',
-                                        style: const TextStyle(
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.bold,
+                                    // Front text (English) visible on front; keep readable using counter-rotation
+                                    Opacity(
+                                      opacity: showBack ? 0 : 1,
+                                      child: Transform(
+                                        transform: Matrix4.identity()..rotateY(-angle),
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          children: const [],
                                         ),
+                                      ),
+                                    ),
+                                    if (!showBack) ...[
+                                      Text(
+                                        currentPhrase['en'] ?? '',
+                                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                                         textAlign: TextAlign.center,
                                       ),
                                       const SizedBox(height: 20),
-                                      const Text(
-                                        'Tap to reveal',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ] else ...[
-                                      Text(
-                                        currentPhrase['japanese'] ?? '',
-                                        style: const TextStyle(
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Text(
-                                        currentPhrase['romaji'] ?? '',
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.grey,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(height: 20),
-                                      IconButton(
-                                        onPressed: _speakJapanese,
-                                        icon: const Icon(Icons.volume_up, size: 32),
-                                        color: Colors.blue,
-                                      ),
+                                      const Text('Tap to reveal', style: TextStyle(fontSize: 16, color: Colors.grey)),
                                     ],
+                                    // Back text (JP/Romaji) visible on back; keep readable using counter-rotation
+                                    Opacity(
+                                      opacity: showBack ? 1 : 0,
+                                      child: Transform(
+                                        transform: Matrix4.identity()..rotateY(-3.14159),
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              currentPhrase['jp'] ?? '',
+                                              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(height: 20),
+                                            Text(
+                                              currentPhrase['romaji'] ?? '',
+                                              style: const TextStyle(fontSize: 20, color: Colors.grey),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(height: 20),
+                                            IconButton(
+                                              onPressed: _speakJapanese,
+                                              icon: const Icon(Icons.volume_up, size: 32),
+                                              color: Colors.blue,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),

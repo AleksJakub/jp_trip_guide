@@ -157,74 +157,91 @@ class _PhrasebookScreenState extends ConsumerState<PhrasebookScreen> {
                             ],
                           ),
                         )
-                      : ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: filteredPhrases.length,
-                          itemBuilder: (context, index) {
-                            final phrase = filteredPhrases[index];
-                            final isSaved = ref.watch(savedPhrasesProvider).contains(phrase['id']);
-                            
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                                                                          Text(
-                                              phrase['en'] ?? '',
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              phrase['jp'] ?? '',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              phrase['romaji'] ?? '',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey,
-                                                fontStyle: FontStyle.italic,
-                                              ),
-                                            ),
-                                            ],
-                                          ),
-                                        ),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.volume_up),
-                                              onPressed: () => _speak(phrase['jp'] ?? ''),
-                                            ),
-                                            IconButton(
-                                              icon: Icon(
-                                                isSaved ? Icons.bookmark : Icons.bookmark_border,
-                                                color: isSaved ? Colors.green : Colors.grey,
-                                              ),
-                                              onPressed: () => _toggleSaved(phrase['id'] ?? ''),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                      : Builder(
+                          builder: (context) {
+                            final Map<String, List<Map<String, dynamic>>> grouped = {};
+                            for (final p in filteredPhrases) {
+                              final String cat = (p['category'] ?? 'Other').toString();
+                              (grouped[cat] ??= []).add(p);
+                            }
+                            final List<String> categories = grouped.keys.toList()..sort();
+
+                            return ListView(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              children: [
+                                for (final cat in categories) ...[
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8, top: 8),
+                                    child: Text(
+                                      cat[0].toUpperCase() + cat.substring(1),
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                  for (final phrase in grouped[cat]!)
+                                    Builder(
+                                      builder: (context) {
+                                        final isSaved = ref.watch(savedPhrasesProvider).contains(phrase['id']);
+                                        return Card(
+                                          margin: const EdgeInsets.only(bottom: 12),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        phrase['en'] ?? '',
+                                                        style: const TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 8),
+                                                      Text(
+                                                        phrase['jp'] ?? '',
+                                                        style: const TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 20,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      Text(
+                                                        phrase['romaji'] ?? '',
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.grey,
+                                                          fontStyle: FontStyle.italic,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(Icons.volume_up),
+                                                      onPressed: () => _speak(phrase['jp'] ?? ''),
+                                                    ),
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        isSaved ? Icons.bookmark : Icons.bookmark_border,
+                                                        color: isSaved ? Colors.green : Colors.grey,
+                                                      ),
+                                                      onPressed: () => _toggleSaved(phrase['id'] ?? ''),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                ],
+                              ],
                             );
                           },
                         ),

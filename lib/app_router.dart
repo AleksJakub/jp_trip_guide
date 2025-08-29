@@ -22,6 +22,7 @@ import 'features/itinerary/add_place_screen.dart';
 import 'features/language/phrasebook_main_screen.dart';
 import 'features/language/saved_phrases_screen.dart';
 import 'features/language/flashcards_screen.dart';
+import 'features/home/alerts_list_screen.dart';
 
 class AppRouter {
   static GoRouter createRouter() {
@@ -187,6 +188,11 @@ class AppRouter {
               path: '/travel-wallet',
               name: 'travel-wallet',
               pageBuilder: (context, state) => const NoTransitionPage(child: TravelWalletScreen()),
+            ),
+            GoRoute(
+              path: '/alerts',
+              name: 'alerts',
+              pageBuilder: (context, state) => const NoTransitionPage(child: AlertsListScreen()),
             ),
           ],
         ),

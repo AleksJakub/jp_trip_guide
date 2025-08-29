@@ -163,53 +163,60 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
                             final item = _filteredItems[index];
                             return Card(
                               margin: const EdgeInsets.only(bottom: 12),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: _getCategoryColor(item['category']),
-                                  child: Icon(
-                                    _getCategoryIcon(item['category']),
-                                    color: Colors.white,
+                              child: InkWell(
+                                onTap: () => _promptTimeAndAdd(item),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: _getCategoryColor(item['category']),
+                                        child: Icon(
+                                          _getCategoryIcon(item['category']),
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item['name'],
+                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(item['city']),
+                                            Text(
+                                              item['description'],
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              children: [
+                                                Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  item['openingHours'],
+                                                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                                                ),
+                                                const SizedBox(width: 16),
+                                                Icon(Icons.attach_money, size: 16, color: Colors.grey[600]),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  item['price'],
+                                                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                title: Text(
-                                  item['name'],
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(item['city']),
-                                    Text(
-                                      item['description'],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          item['openingHours'],
-                                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        Icon(Icons.attach_money, size: 16, color: Colors.grey[600]),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          item['price'],
-                                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                onTap: () => _addPlaceToItinerary(item),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () => _addPlaceToItinerary(item),
-                                ),
-                                isThreeLine: true,
                               ),
                             );
                           },
@@ -269,7 +276,19 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
     }
   }
 
-  Future<void> _addPlaceToItinerary(Map<String, dynamic> place) async {
+  Future<void> _promptTimeAndAdd(Map<String, dynamic> place) async {
+    TimeOfDay? start;
+    TimeOfDay? end;
+    await showDialog(
+      context: context,
+      builder: (_) => _SelectTimesDialog(
+        onSave: (s, e) {
+          start = s;
+          end = e;
+        },
+      ),
+    );
+
     final trips = ref.read(tripsProvider);
     String? tripId;
     for (final t in trips) {
@@ -286,11 +305,15 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
       lat: (place['lat'] as num).toDouble(),
       lng: (place['lng'] as num).toDouble(),
       category: place['category'] as String?,
+      startTs: start == null ? null : DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, start!.hour, start!.minute),
+      endTs: end == null ? null : DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, end!.hour, end!.minute),
     );
 
     await ref.read(tripsProvider.notifier).addStop(widget.dayId, stop);
 
     if (!mounted) return;
+    // Mark this day to be expanded when we land on the trip view
+    ref.read(expandedDayIdProvider.notifier).state = widget.dayId;
     if (tripId != null) {
       context.go('/trip/${Uri.encodeComponent(tripId)}');
     } else {
@@ -302,6 +325,63 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
         content: Text('Added ${place['name']} to itinerary'),
         duration: const Duration(seconds: 2),
       ),
+    );
+  }
+}
+
+class _SelectTimesDialog extends StatefulWidget {
+  final void Function(TimeOfDay? start, TimeOfDay? end) onSave;
+  const _SelectTimesDialog({required this.onSave});
+
+  @override
+  State<_SelectTimesDialog> createState() => _SelectTimesDialogState();
+}
+
+class _SelectTimesDialogState extends State<_SelectTimesDialog> {
+  TimeOfDay? _start;
+  TimeOfDay? _end;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add Times (optional)'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text('Start Time'),
+            subtitle: Text(_start != null ? _start!.format(context) : 'Not set'),
+            onTap: () async {
+              final TimeOfDay? t = await showTimePicker(context: context, initialTime: _start ?? TimeOfDay.now());
+              if (t != null) setState(() => _start = t);
+            },
+            trailing: _start != null
+                ? TextButton(onPressed: () => setState(() => _start = null), child: const Text('Clear'))
+                : null,
+          ),
+          ListTile(
+            title: const Text('End Time'),
+            subtitle: Text(_end != null ? _end!.format(context) : 'Not set'),
+            onTap: () async {
+              final TimeOfDay? t = await showTimePicker(context: context, initialTime: _end ?? (_start ?? TimeOfDay.now()));
+              if (t != null) setState(() => _end = t);
+            },
+            trailing: _end != null
+                ? TextButton(onPressed: () => setState(() => _end = null), child: const Text('Clear'))
+                : null,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+        ElevatedButton(
+          onPressed: () {
+            widget.onSave(_start, _end);
+            Navigator.of(context).pop();
+          },
+          child: const Text('Save'),
+        ),
+      ],
     );
   }
 }

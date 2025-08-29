@@ -29,8 +29,8 @@ class QuickTipCard extends ConsumerWidget {
                 ),
                 const Spacer(),
                 TextButton(
-                  onPressed: () => context.go('/more'),
-                  child: const Text('View More'),
+                  onPressed: () => context.go('/live-events'),
+                  child: const Text('Upcoming Events'),
                 ),
               ],
             ),

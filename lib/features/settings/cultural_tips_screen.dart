@@ -51,10 +51,12 @@ class CulturalTipsScreen extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    children: categoryTips.map((tip) => ListTile(
-                      title: Text(tip.tip),
-                      subtitle: Text(tip.id),
-                    )).toList(),
+                    children: categoryTips
+                        .where((tip) => tip.id != 'gen_bow' && tip.id != 'gen_shoes_off')
+                        .map((tip) => ListTile(
+                              title: Text(tip.tip),
+                            ))
+                        .toList(),
                   ),
                 );
               },

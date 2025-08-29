@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class UpcomingEventsCard extends ConsumerWidget {
   const UpcomingEventsCard({super.key});
@@ -84,7 +85,7 @@ class UpcomingEventsCard extends ConsumerWidget {
                   const Spacer(),
                   IconButton(
                     onPressed: () {
-                      // TODO: Navigate to events page
+                      context.go('/live-events');
                     },
                     icon: Icon(
                       Icons.arrow_forward_ios,
@@ -108,7 +109,9 @@ class UpcomingEventsCard extends ConsumerWidget {
                        margin: const EdgeInsets.only(right: 12),
                        child: Card(
                          elevation: 2,
-                         child: Padding(
+                         child: InkWell(
+                           onTap: () => context.go('/live-events'),
+                           child: Padding(
                            padding: const EdgeInsets.all(10),
                            child: Column(
                              crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,6 +176,7 @@ class UpcomingEventsCard extends ConsumerWidget {
                              ],
                            ),
                          ),
+                       ),
                        ),
                      );
                    },

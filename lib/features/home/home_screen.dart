@@ -6,6 +6,7 @@ import '../itinerary/state/trips_provider.dart';
 import 'quick_tip_card.dart';
 import 'weather_card.dart';
 import 'upcoming_events_card.dart';
+import 'alerts_card.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -36,6 +37,8 @@ class HomeScreen extends ConsumerWidget {
                   const TodayItineraryCard(),
                   const SizedBox(height: 16),
                   const WeatherCard(),
+                  const SizedBox(height: 16),
+                  const AlertsCard(),
                   const SizedBox(height: 16),
                   const QuickTipCard(),
                   const SizedBox(height: 16),
