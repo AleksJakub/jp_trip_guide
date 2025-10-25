@@ -55,6 +55,9 @@ dependencies:
   supabase_flutter: ^2.9.1
   share_plus: ^11.1.0
   google_fonts: ^6.3.0
+  image_picker: ^1.1.2
+  crypto: ^3.0.3
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -85,8 +88,12 @@ flutter:
   assets:
     - assets/phrases/phrases_en_jp.json
     - assets/culture/etiquette.json
+    - assets/culture/cultural_tips.json
     - assets/emergency/embassies.json
+    - assets/places/things_to_do.json
     - assets/icons/
+    - images/
+    - .env
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

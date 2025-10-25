@@ -1,0 +1,252 @@
+[
+  {
+    "id": "gen_bow",
+    "category": "general",
+    "tip": "Bow instead of shaking hands when greeting."
+  },
+  {
+    "id": "gen_shoes_off",
+    "category": "general",
+    "tip": "Always remove shoes before entering homes, traditional inns, and some restaurants."
+  },
+  {
+    "id": "gen_punctuality",
+    "category": "general",
+    "tip": "Be punctual; trains, tours, and meetings start exactly on time."
+  },
+  {
+    "id": "gen_quiet",
+    "category": "general",
+    "tip": "Keep your voice low in public spaces."
+  },
+  {
+    "id": "gen_cash",
+    "category": "general",
+    "tip": "Carry cash; many small shops and temples don't accept credit cards."
+  },
+  {
+    "id": "gen_politeness",
+    "category": "general",
+    "tip": "Politeness is expected; use 'sumimasen' (excuse me) often."
+  },
+  {
+    "id": "gen_no_tipping",
+    "category": "general",
+    "tip": "Tipping is not practiced; attempting to tip may cause confusion."
+  },
+  {
+    "id": "gen_queue",
+    "category": "general",
+    "tip": "Always queue in an orderly line for trains, buses, and shops."
+  },
+  {
+    "id": "gen_garbage",
+    "category": "general",
+    "tip": "Carry your trash; bins are scarce in Japan."
+  },
+  {
+    "id": "gen_two_hands",
+    "category": "general",
+    "tip": "Use both hands when giving or receiving items, especially money or business cards."
+  },
+  {
+    "id": "shrine_purify",
+    "category": "shrines_temples",
+    "tip": "Wash your hands and mouth at the purification fountain before entering a shrine."
+  },
+  {
+    "id": "shrine_torii",
+    "category": "shrines_temples",
+    "tip": "Do not walk directly in the center under the torii gate; that space is reserved for deities."
+  },
+  {
+    "id": "shrine_offering",
+    "category": "shrines_temples",
+    "tip": "At the offertory box, toss a coin, bow twice, clap twice, pray silently, then bow once more."
+  },
+  {
+    "id": "shrine_photos",
+    "category": "shrines_temples",
+    "tip": "Respect 'no photography' signs; some sacred areas prohibit cameras."
+  },
+  {
+    "id": "shrine_shoes",
+    "category": "shrines_temples",
+    "tip": "Remove shoes when entering temple halls or tatami areas."
+  },
+  {
+    "id": "shrine_bells",
+    "category": "shrines_temples",
+    "tip": "It is customary to ring the bell before praying at some shrines."
+  },
+  {
+    "id": "shrine_donations",
+    "category": "shrines_temples",
+    "tip": "Small coin donations (5 yen is considered lucky) are appreciated."
+  },
+  {
+    "id": "shrine_dress",
+    "category": "shrines_temples",
+    "tip": "Dress modestly when visiting religious sites."
+  },
+  {
+    "id": "shrine_walk",
+    "category": "shrines_temples",
+    "tip": "Walk quietly and respectfully; avoid blocking pathways."
+  },
+  {
+    "id": "shrine_season",
+    "category": "shrines_temples",
+    "tip": "Expect crowds at New Year and festival days; behave patiently."
+  },
+  {
+    "id": "onsen_no_clothes",
+    "category": "onsen_baths",
+    "tip": "Do not wear swimsuits; bathe naked in onsen and sento."
+  },
+  {
+    "id": "onsen_wash",
+    "category": "onsen_baths",
+    "tip": "Wash and rinse thoroughly before entering the bath."
+  },
+  {
+    "id": "onsen_towel",
+    "category": "onsen_baths",
+    "tip": "Do not put your towel in the bath water; place it on your head or the side."
+  },
+  {
+    "id": "onsen_tattoos",
+    "category": "onsen_baths",
+    "tip": "Some onsen forbid tattoos; check rules or use a cover sticker."
+  },
+  {
+    "id": "onsen_quiet",
+    "category": "onsen_baths",
+    "tip": "Keep voices low; onsen are for relaxation."
+  },
+  {
+    "id": "onsen_photos",
+    "category": "onsen_baths",
+    "tip": "Photography is not allowed inside bathing areas."
+  },
+  {
+    "id": "onsen_hair",
+    "category": "onsen_baths",
+    "tip": "Tie up long hair; do not let it touch the water."
+  },
+  {
+    "id": "onsen_food",
+    "category": "onsen_baths",
+    "tip": "Do not bring food or drinks into the bathing area."
+  },
+  {
+    "id": "onsen_time",
+    "category": "onsen_baths",
+    "tip": "Limit time in hot baths to avoid dizziness."
+  },
+  {
+    "id": "onsen_mixed",
+    "category": "onsen_baths",
+    "tip": "Mixed-gender baths exist but are rare; most are separated."
+  },
+  {
+    "id": "food_chopsticks",
+    "category": "dining",
+    "tip": "Do not stick chopsticks upright in rice; it resembles funeral rituals."
+  },
+  {
+    "id": "food_pass",
+    "category": "dining",
+    "tip": "Do not pass food directly chopstick-to-chopstick; use a plate."
+  },
+  {
+    "id": "food_slurp",
+    "category": "dining",
+    "tip": "Slurping noodles is polite and shows appreciation."
+  },
+  {
+    "id": "food_wait",
+    "category": "dining",
+    "tip": "Wait for everyone to be served before starting."
+  },
+  {
+    "id": "food_itadakimasu",
+    "category": "dining",
+    "tip": "Say 'itadakimasu' before eating as a form of thanks."
+  },
+  {
+    "id": "food_gotchisousama",
+    "category": "dining",
+    "tip": "Say 'gochisousama deshita' after finishing a meal to thank the cook."
+  },
+  {
+    "id": "food_no_tip",
+    "category": "dining",
+    "tip": "Do not tip in restaurants; service charge is included."
+  },
+  {
+    "id": "food_shared",
+    "category": "dining",
+    "tip": "Use the opposite ends of chopsticks when taking food from shared dishes."
+  },
+  {
+    "id": "food_bills",
+    "category": "dining",
+    "tip": "Pay at the counter, not at the table, in many restaurants."
+  },
+  {
+    "id": "food_refills",
+    "category": "dining",
+    "tip": "It is polite to refill others' glasses before your own."
+  },
+  {
+    "id": "transport_quiet",
+    "category": "transport",
+    "tip": "Stay quiet on trains; phone calls are discouraged."
+  },
+  {
+    "id": "transport_priority",
+    "category": "transport",
+    "tip": "Do not sit in priority seats if elderly, disabled, or pregnant people are present."
+  },
+  {
+    "id": "transport_queue",
+    "category": "transport",
+    "tip": "Line up neatly when boarding trains or buses."
+  },
+  {
+    "id": "transport_backpack",
+    "category": "transport",
+    "tip": "Take off backpacks or hold them low to avoid bumping others."
+  },
+  {
+    "id": "transport_escalator",
+    "category": "transport",
+    "tip": "Stand on the left side of escalators in Tokyo, right side in Osaka."
+  },
+  {
+    "id": "shop_bags",
+    "category": "shopping",
+    "tip": "Plastic bags cost extra; bring a reusable bag."
+  },
+  {
+    "id": "shop_cash_tray",
+    "category": "shopping",
+    "tip": "Place money in the tray at the cashier, not directly in hand."
+  },
+  {
+    "id": "shop_wrapping",
+    "category": "shopping",
+    "tip": "Expect careful gift wrapping at stores, even for small items."
+  },
+  {
+    "id": "shop_receipts",
+    "category": "shopping",
+    "tip": "Receipts are often stamped or clipped to your bag as proof of purchase."
+  },
+  {
+    "id": "shop_taxfree",
+    "category": "shopping",
+    "tip": "Tax-free shopping is available for tourists with passport; check minimum purchase rules."
+  }
+]

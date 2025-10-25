@@ -10,6 +10,7 @@ class StopItem {
   final String transportMode;
   final String notes;
   final int sortIndex;
+  final double? cost;
 
   const StopItem({
     required this.id,
@@ -23,6 +24,7 @@ class StopItem {
     this.transportMode = 'transit',
     this.notes = '',
     this.sortIndex = 0,
+    this.cost,
   });
 
   StopItem copyWith({
@@ -37,6 +39,7 @@ class StopItem {
     String? transportMode,
     String? notes,
     int? sortIndex,
+    double? cost,
   }) {
     return StopItem(
       id: id ?? this.id,
@@ -50,6 +53,7 @@ class StopItem {
       transportMode: transportMode ?? this.transportMode,
       notes: notes ?? this.notes,
       sortIndex: sortIndex ?? this.sortIndex,
+      cost: cost ?? this.cost,
     );
   }
 
@@ -65,6 +69,7 @@ class StopItem {
         'transportMode': transportMode,
         'notes': notes,
         'sortIndex': sortIndex,
+        'cost': cost,
       };
 
   static StopItem fromMap(Map<String, dynamic> map) => StopItem(
@@ -79,6 +84,7 @@ class StopItem {
         transportMode: map['transportMode'] as String? ?? 'transit',
         notes: map['notes'] as String? ?? '',
         sortIndex: map['sortIndex'] as int? ?? 0,
+        cost: map['cost'] as double?,
       );
 }
 

@@ -35,9 +35,21 @@ class TripsNotifier extends Notifier<List<Trip>> {
     state = [...state]..removeWhere((t) => t.id == id);
   }
 
-  Future<void> addDay(String tripId, DateTime date) async {
+  Future<void> addDay(String tripId, DateTime date, {String? nickname}) async {
     final repo = ref.read(tripsRepositoryProvider);
-    final Trip updated = await repo.addDay(tripId, date);
+    final Trip updated = await repo.addDay(tripId, date, nickname: nickname);
+    state = [for (final t in state) if (t.id == updated.id) updated else t];
+  }
+
+  Future<void> updateDay(String dayId, {DateTime? date, String? nickname}) async {
+    final repo = ref.read(tripsRepositoryProvider);
+    final Trip updated = await repo.updateDay(dayId, date: date, nickname: nickname);
+    state = [for (final t in state) if (t.id == updated.id) updated else t];
+  }
+
+  Future<void> deleteDay(String dayId) async {
+    final repo = ref.read(tripsRepositoryProvider);
+    final Trip updated = await repo.deleteDay(dayId);
     state = [for (final t in state) if (t.id == updated.id) updated else t];
   }
 
@@ -52,8 +64,29 @@ class TripsNotifier extends Notifier<List<Trip>> {
     final Trip updated = await repo.reorderStops(dayId, stops);
     state = [for (final t in state) if (t.id == updated.id) updated else t];
   }
+
+  Future<void> updateStop(String dayId, StopItem stop) async {
+    final repo = ref.read(tripsRepositoryProvider);
+    final Trip updated = await repo.updateStop(dayId, stop);
+    state = [for (final t in state) if (t.id == updated.id) updated else t];
+  }
+
+  Future<void> deleteStop(String dayId, String stopId) async {
+    final repo = ref.read(tripsRepositoryProvider);
+    final Trip updated = await repo.deleteStop(dayId, stopId);
+    state = [for (final t in state) if (t.id == updated.id) updated else t];
+  }
+
+  Future<void> updateTrip(String tripId, {String? title, DateTime? start, DateTime? end}) async {
+    final repo = ref.read(tripsRepositoryProvider);
+    final Trip updated = await repo.updateTrip(tripId, title: title, start: start, end: end);
+    state = [for (final t in state) if (t.id == updated.id) updated else t];
+  }
 }
 
 final currentTripIdProvider = StateProvider<String?>((ref) => null);
+
+// When navigating back to a trip after adding a place, expand this day by default.
+final expandedDayIdProvider = StateProvider<String?>((ref) => null);
 
 
