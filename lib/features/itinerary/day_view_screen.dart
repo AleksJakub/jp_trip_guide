@@ -227,6 +227,8 @@ class _DayViewScreenState extends ConsumerState<DayViewScreen> {
                 await showDialog(
                   context: context,
                   builder: (_) => _AddDayDialog(
+                    minDate: DateTime(trip.startDate.year, trip.startDate.month, trip.startDate.day),
+                    maxDate: DateTime(trip.endDate.year, trip.endDate.month, trip.endDate.day),
                     onAdd: (date, nickname) async {
                       await ref.read(tripsProvider.notifier).addDay(trip.id, date, nickname: nickname);
                     },
@@ -248,14 +250,16 @@ class _DayViewScreenState extends ConsumerState<DayViewScreen> {
 
 class _AddDayDialog extends StatefulWidget {
   final Future<void> Function(DateTime date, String? nickname) onAdd;
-  const _AddDayDialog({required this.onAdd});
+  final DateTime minDate;
+  final DateTime maxDate;
+  const _AddDayDialog({required this.onAdd, required this.minDate, required this.maxDate});
 
   @override
   State<_AddDayDialog> createState() => _AddDayDialogState();
 }
 
 class _AddDayDialogState extends State<_AddDayDialog> {
-  DateTime _date = DateTime.now();
+  late DateTime _date;
   final TextEditingController _nickname = TextEditingController();
 
   @override
@@ -275,11 +279,12 @@ class _AddDayDialogState extends State<_AddDayDialog> {
             title: const Text('Date'),
             subtitle: Text(DateFormat('EEE, MMM d, y').format(_date)),
             onTap: () async {
+                final DateTime safeInitial = _clampDate(_date);
                 final DateTime? d = await showDatePicker(
                   context: context,
-                  initialDate: _date,
-                  firstDate: DateTime(2020),
-                  lastDate: DateTime(2035),
+                  initialDate: safeInitial,
+                  firstDate: widget.minDate,
+                  lastDate: widget.maxDate,
                 );
                 if (d != null) setState(() => _date = d);
               },
@@ -307,6 +312,18 @@ class _AddDayDialogState extends State<_AddDayDialog> {
         ),
       ],
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _date = _clampDate(DateTime.now());
+  }
+
+  DateTime _clampDate(DateTime value) {
+    if (value.isBefore(widget.minDate)) return widget.minDate;
+    if (value.isAfter(widget.maxDate)) return widget.maxDate;
+    return DateTime(value.year, value.month, value.day);
   }
 }
 
@@ -635,9 +652,22 @@ class _EmptyTripDays extends ConsumerWidget {
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: () async {
+              final trips = ref.read(tripsProvider);
+              Trip? trip;
+              for (final t in trips) {
+                if (t.id == tripId) {
+                  trip = t;
+                  break;
+                }
+              }
+              if (trip == null) return;
+              final DateTime minDate = DateTime(trip!.startDate.year, trip!.startDate.month, trip!.startDate.day);
+              final DateTime maxDate = DateTime(trip!.endDate.year, trip!.endDate.month, trip!.endDate.day);
               await showDialog(
                 context: context,
                 builder: (_) => _AddDayDialog(
+                  minDate: minDate,
+                  maxDate: maxDate,
                   onAdd: (date, nickname) async {
                     await ref.read(tripsProvider.notifier).addDay(tripId, date, nickname: nickname);
                   },

@@ -180,7 +180,14 @@ class _CreateTripDialogState extends State<_CreateTripDialog> {
           InkWell(
             onTap: () async {
               final DateTime? d = await showDatePicker(context: context, initialDate: _start, firstDate: DateTime(2020), lastDate: DateTime(2035));
-              if (d != null) setState(() => _start = d);
+              if (d != null) {
+                setState(() {
+                  _start = d;
+                  if (_end.isBefore(d)) {
+                    _end = d;
+                  }
+                });
+              }
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -189,8 +196,18 @@ class _CreateTripDialogState extends State<_CreateTripDialog> {
           ),
           InkWell(
             onTap: () async {
-              final DateTime? d = await showDatePicker(context: context, initialDate: _end, firstDate: _start, lastDate: DateTime(2035));
-              if (d != null) setState(() => _end = d);
+              final DateTime safeInitial = _end.isBefore(_start) ? _start : _end;
+              try {
+                final DateTime? d = await showDatePicker(context: context, initialDate: safeInitial, firstDate: _start, lastDate: DateTime(2035));
+                if (d != null) {
+                  setState(() => _end = d);
+                }
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('End date must be on or after the start date.')),
+                );
+              }
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class AlertsCard extends StatefulWidget {
   const AlertsCard({super.key});
@@ -97,13 +98,27 @@ class _AlertsCardState extends State<AlertsCard> {
                       contentPadding: EdgeInsets.zero,
                       leading: Icon(a.type == 'tsunami' ? Icons.waves : Icons.public, color: a.type == 'tsunami' ? Colors.blue : Colors.orange),
                       title: Text(a.title),
-                      subtitle: Text('${a.city ?? a.region} • ${a.time.toLocal()}'),
+                      subtitle: Text('${_formatLocation(a)} • ${_formatTimestamp(a.time)}'),
                     )).toList(),
               ),
           ],
         ),
       ),
     );
+  }
+
+  String _formatTimestamp(DateTime time) {
+    final local = time.toLocal();
+    return DateFormat('d MMM, HH:mm').format(local);
+  }
+
+  String _formatLocation(_AlertItem a) {
+    final List<String> parts = [];
+    final String city = (a.city ?? '').trim();
+    final String region = a.region.trim();
+    if (city.isNotEmpty) parts.add(city);
+    if (region.isNotEmpty && (parts.isEmpty || parts.last != region)) parts.add(region);
+    return parts.isEmpty ? 'Japan' : parts.join(', ');
   }
 
   Future<List<_AlertItem>> _fetchJmaEarthquakes(Dio dio) async {
